@@ -1,18 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Spline from "@splinetool/react-spline";
+import HeroBar from "./components/HeroBar";
+import MainContent from "./components/MainContent";
+import Footer from "./components/Footer";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-     <h1 className="text-3xl font-bold underline text-red-600">
-      Hello world!
-    </h1>
-    </>
-  )
-}
+    <div className="relative min-h-screen w-full bg-black text-white">
+      {/* 1. FIXED BACKGROUND LAYER (z-0) */}
+      <div className="fixed inset-0 z-0 h-screen w-full">
+        <Spline
+          className="w-full h-full"
+          scene="https://prod.spline.design/y5DzUjfC7M-eBfER/scene.splinecode"
+        />
+      </div>
+      <div className="relative z-50 w-full pointer-events-none">
+        <div className="pointer-events-auto">
+          <HeroBar />
+        </div>
 
-export default App
+        <div className="pointer-events-none">
+          {" "}
+          <MainContent />
+        </div>
+        <div className="pointer-events-auto">
+          <Footer />
+        </div>
+      </div>
+    </div>
+  );
+}
