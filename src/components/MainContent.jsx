@@ -209,8 +209,9 @@ const MainContent = () => {
   return (
     <div className="pointer-events-none w-full px-6 py-20 md:px-20">
       <div className="mx-auto max-w-6xl space-y-32">
-        {/* HERO */}
-        <section className="flex flex-col justify-center pt-20">
+        
+        {/* HERO SECTION (ID: home) */}
+        <section id="home" className="flex flex-col justify-center pt-20">
           <div className="pointer-events-auto">
             <motion.p
               initial={{ opacity: 0, x: -50 }}
@@ -239,8 +240,8 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* PROJECTS */}
-        <section>
+        {/* PROJECTS SECTION (ID: work) */}
+        <section id="work">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -300,8 +301,8 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* SKILLS */}
-        <section>
+        {/* SKILLS SECTION (ID: about) */}
+        <section id="about">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -332,9 +333,7 @@ const MainContent = () => {
                 >
                   <cat.icon size={28} />
                 </motion.div>
-                <h3 className="mb-4 text-xl font-bold text-white">
-                  {cat.title}
-                </h3>
+                <h3 className="mb-4 text-xl font-bold text-white">{cat.title}</h3>
                 <ul className="space-y-2">
                   {cat.skills.map((skill) => (
                     <li
@@ -355,7 +354,7 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* EDUCATION - UPDATED */}
+        {/* EDUCATION SECTION */}
         <section className="pb-20">
           <motion.div
             initial="hidden"
@@ -465,7 +464,7 @@ const MainContent = () => {
               </div>
             </motion.div>
 
-            {/* 3. Secondary School (Added) */}
+            {/* 3. Secondary School */}
             <motion.div
               initial="hidden"
               whileInView="visible"
