@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import {
   Github,
   ExternalLink,
@@ -17,22 +17,92 @@ import {
   Type,
 } from "lucide-react";
 
+// --- OPTIMIZED SPOTLIGHT CARD ---
+const SpotlightCard = ({ children, className = "" }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <div
+      className={`group relative border border-white/10 bg-neutral-900/40 overflow-hidden ${className}`}
+      onMouseMove={handleMouseMove}
+    >
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              650px circle at ${mouseX}px ${mouseY}px,
+              rgba(34, 211, 238, 0.15),
+              transparent 80%
+            )
+          `,
+          willChange: "opacity",
+        }}
+      />
+      <div className="relative h-full">{children}</div>
+    </div>
+  );
+};
+
 const MainContent = () => {
   // --- ANIMATION VARIANTS ---
-  const containerVariants = {
-    hidden: { opacity: 0 },
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 40 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.15 },
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
     },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  const fadeInLeft = {
+    hidden: { opacity: 0, x: -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
   };
 
-  // --- CONTACT FORM STATE ---
+  const floatingIcon = {
+    animate: {
+      y: [0, -10, 0],
+      rotate: [0, 5, -5, 0],
+      transition: {
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  const charVariants = {
+    hidden: { opacity: 0, y: 50, rotateX: -90 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      rotateX: 0,
+      transition: { type: "spring", damping: 12, stiffness: 100 },
+    },
+  };
+
+  const wordVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  };
+
+  // --- FORM STATE ---
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -46,9 +116,43 @@ const MainContent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Functional 'mailto' link generation
     window.location.href = `mailto:pallavsarkar@example.com?subject=${formData.subject}&body=Name: ${formData.name}%0AEmail: ${formData.email}%0A%0A${formData.message}`;
   };
+
+  // --- TEXT COMPONENTS ---
+  const AnimatedName = ({ text }) => (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      transition={{ staggerChildren: 0.08 }}
+      className="flex flex-wrap"
+    >
+      {text.split("").map((char, index) => (
+        <motion.span key={index} variants={charVariants}>
+          {char === " " ? "\u00A0" : char}
+        </motion.span>
+      ))}
+    </motion.div>
+  );
+
+  const AnimatedTagline = ({ text }) => (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      transition={{ staggerChildren: 0.12, delayChildren: 0.5 }}
+      className="flex flex-wrap gap-x-3"
+    >
+      {text.split(" ").map((word, index) => (
+        <motion.span
+          key={index}
+          variants={wordVariants}
+          className="inline-block bg-gradient-to-r from-gray-400 via-white to-gray-400 bg-clip-text text-transparent"
+        >
+          {word}
+        </motion.span>
+      ))}
+    </motion.div>
+  );
 
   // --- DATA ---
   const projects = [
@@ -104,38 +208,28 @@ const MainContent = () => {
 
   return (
     <div className="pointer-events-none w-full px-6 py-20 md:px-20">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="mx-auto max-w-6xl space-y-32"
-      >
-        {/* ==================== 1. HERO SECTION ==================== */}
+      <div className="mx-auto max-w-6xl space-y-32">
+        {/* HERO */}
         <section className="flex flex-col justify-center pt-20">
           <div className="pointer-events-auto">
             <motion.p
-              variants={itemVariants}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
               className="mb-4 font-mono text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]"
             >
               Hi, my name is
             </motion.p>
-
-            <motion.h1
-              variants={itemVariants}
-              className="mb-4 text-6xl font-bold tracking-tighter text-white md:text-8xl"
-            >
-              Pallav Sarkar
-            </motion.h1>
-
-            <motion.h2
-              variants={itemVariants}
-              className="mb-8 text-4xl font-bold text-gray-400 md:text-6xl"
-            >
-              I build things for the web.
-            </motion.h2>
-
+            <div className="mb-4 text-6xl font-bold tracking-tighter text-white md:text-8xl">
+              <AnimatedName text="Pallav Sarkar" />
+            </div>
+            <div className="mb-8 text-4xl font-bold md:text-6xl">
+              <AnimatedTagline text="I build things for the web." />
+            </div>
             <motion.p
-              variants={itemVariants}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
               className="max-w-xl text-lg text-gray-300 backdrop-blur-sm"
             >
               I'm a software engineer specializing in building (and occasionally
@@ -145,10 +239,13 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* ==================== 2. PROJECTS SECTION ==================== */}
+        {/* PROJECTS */}
         <section>
           <motion.div
-            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInLeft}
             className="mb-12 flex items-center gap-4"
           >
             <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
@@ -156,56 +253,60 @@ const MainContent = () => {
             </h2>
             <div className="h-[1px] w-32 bg-white/20"></div>
           </motion.div>
-
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project, index) => (
               <motion.div
                 key={index}
-                variants={itemVariants}
-                whileHover={{ y: -10 }}
-                className="pointer-events-auto group relative flex flex-col justify-between overflow-hidden rounded-xl border border-white/10 bg-neutral-900/40 p-6 backdrop-blur-md transition-all hover:border-cyan-500/50"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -10, scale: 1.02 }}
+                className="pointer-events-auto"
               >
-                {/* Gradient Top Line */}
-                <div
-                  className={`absolute top-0 left-0 h-1 w-full bg-gradient-to-r ${project.color}`}
-                />
-
-                <div>
-                  <h3 className="mb-2 text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="mb-6 text-sm text-gray-400 leading-relaxed">
-                    {project.desc}
-                  </p>
-                  <div className="mb-6 flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-white/5 px-3 py-1 text-xs font-mono text-cyan-200"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                <SpotlightCard className="flex h-full flex-col justify-between rounded-xl p-6 backdrop-blur-md">
+                  <div
+                    className={`absolute top-0 left-0 h-1 w-full bg-gradient-to-r ${project.color}`}
+                  />
+                  <div>
+                    <h3 className="mb-2 text-2xl font-bold text-white transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="mb-6 text-sm text-gray-400 leading-relaxed">
+                      {project.desc}
+                    </p>
+                    <div className="mb-6 flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-white/5 px-3 py-1 text-xs font-mono text-cyan-200 border border-white/5"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <button className="flex items-center gap-2 rounded-lg bg-cyan-500/10 px-4 py-2 text-sm font-bold text-cyan-400 transition-all hover:bg-cyan-500 hover:text-black">
-                    <ExternalLink size={16} /> Live Demo
-                  </button>
-                  <button className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-white transition-all hover:border-white hover:bg-white/5">
-                    <Github size={16} /> Code
-                  </button>
-                </div>
+                  <div className="flex gap-4">
+                    <button className="flex items-center gap-2 rounded-lg bg-cyan-500/10 px-4 py-2 text-sm font-bold text-cyan-400 transition-all hover:bg-cyan-500 hover:text-black">
+                      <ExternalLink size={16} /> Live Demo
+                    </button>
+                    <button className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-white transition-all hover:border-white hover:bg-white/5">
+                      <Github size={16} /> Code
+                    </button>
+                  </div>
+                </SpotlightCard>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* ==================== 3. TECHNICAL SKILLS ==================== */}
+        {/* SKILLS */}
         <section>
           <motion.div
-            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInLeft}
             className="mb-12 flex items-center gap-4"
           >
             <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
@@ -213,20 +314,24 @@ const MainContent = () => {
             </h2>
             <div className="h-[1px] w-32 bg-white/20"></div>
           </motion.div>
-
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {skillCategories.map((cat, idx) => (
               <motion.div
                 key={idx}
-                variants={itemVariants}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
                 whileHover={{ scale: 1.05 }}
                 className="pointer-events-auto rounded-xl border border-white/10 bg-neutral-900/60 p-6 backdrop-blur-md transition-colors hover:border-purple-500/50"
               >
-                <div
-                  className={`mb-4 inline-flex rounded-lg bg-white/5 p-3 ${cat.color}`}
+                <motion.div
+                  variants={floatingIcon}
+                  animate="animate"
+                  className={`mb-4 inline-flex rounded-lg bg-white/5 p-3 ${cat.color} shadow-[0_0_15px_rgba(0,0,0,0.3)]`}
                 >
-                  <cat.icon size={24} />
-                </div>
+                  <cat.icon size={28} />
+                </motion.div>
                 <h3 className="mb-4 text-xl font-bold text-white">
                   {cat.title}
                 </h3>
@@ -236,8 +341,10 @@ const MainContent = () => {
                       key={skill}
                       className="flex items-center gap-2 text-sm text-gray-400"
                     >
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full bg-current ${cat.color}`}
+                      <motion.span
+                        initial={{ width: 0 }}
+                        whileInView={{ width: 6 }}
+                        className={`h-1.5 rounded-full bg-current ${cat.color}`}
                       />
                       {skill}
                     </li>
@@ -248,10 +355,13 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* ==================== 4. EDUCATION ==================== */}
+        {/* EDUCATION - UPDATED */}
         <section className="pb-20">
           <motion.div
-            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInLeft}
             className="mb-12 flex items-center gap-4"
           >
             <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
@@ -260,15 +370,32 @@ const MainContent = () => {
             <div className="h-[1px] w-32 bg-white/20"></div>
           </motion.div>
 
-          <div className="pointer-events-auto max-w-3xl">
-            {/* Degree Card */}
+          <div className="pointer-events-auto max-w-3xl relative">
+            {/* Timeline Line */}
             <motion.div
-              variants={itemVariants}
-              className="relative mb-12 border-l-2 border-white/10 pl-8 ml-4"
-            >
-              <span className="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-pink-500 shadow-[0_0_10px_magenta]"></span>
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              style={{ originY: 0 }}
+              className="absolute left-[11px] top-4 h-full w-[2px] bg-gradient-to-b from-pink-500 via-purple-500 to-transparent"
+            />
 
-              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-pink-500/30">
+            {/* 1. Bachelor's Degree */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="relative mb-12 pl-12"
+            >
+              <motion.span
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.2 }}
+                className="absolute left-0 top-1 h-6 w-6 rounded-full border-4 border-black bg-pink-500 shadow-[0_0_10px_magenta]"
+              />
+              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-pink-500/30 hover:bg-neutral-900/60">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
                   <h3 className="text-2xl font-bold text-white">
                     Bachelor's Degree
@@ -277,37 +404,41 @@ const MainContent = () => {
                     <Calendar size={12} /> 2024 - 2028
                   </span>
                 </div>
-
                 <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
                   <div className="flex items-center gap-2">
                     <GraduationCap size={18} className="text-pink-400" />
-                    <span>NIST University</span>
+                    <span>Jindal School / University</span>
                   </div>
                   <span className="hidden sm:inline">•</span>
                   <div className="flex items-center gap-2">
                     <MapPin size={18} className="text-pink-400" />
-                    <span>Berhampure, India</span>
+                    <span>Soyabali, India</span>
                   </div>
                 </div>
-
                 <p className="text-base leading-relaxed text-gray-300">
                   Pursuing a specialized degree focused on Computer Science
                   principles. The curriculum involves deep dives into
                   algorithms, software engineering patterns, and modern web
-                  technologies. Active participant in coding clubs and student
-                  leadership organizations.
+                  technologies.
                 </p>
               </div>
             </motion.div>
 
-            {/* High School Card */}
+            {/* 2. Higher Secondary School */}
             <motion.div
-              variants={itemVariants}
-              className="relative mb-12 border-l-2 border-white/10 pl-8 ml-4"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="relative mb-12 pl-12"
             >
-              <span className="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.8)]"></span>
-
-              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-purple-500/30">
+              <motion.span
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.4 }}
+                className="absolute left-0 top-1 h-6 w-6 rounded-full border-4 border-black bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.8)]"
+              />
+              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-purple-500/30 hover:bg-neutral-900/60">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
                   <h3 className="text-2xl font-bold text-white">
                     Higher Secondary School
@@ -316,7 +447,6 @@ const MainContent = () => {
                     <Calendar size={12} /> 2022 - 2024
                   </span>
                 </div>
-
                 <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
                   <div className="flex items-center gap-2">
                     <GraduationCap size={18} className="text-purple-400" />
@@ -328,71 +458,75 @@ const MainContent = () => {
                     <span>Soyabali, India</span>
                   </div>
                 </div>
-
                 <p className="text-base leading-relaxed text-gray-300">
                   Completed rigorous coursework with a major in Science and
                   Mathematics, complemented by Computer Science electives.
-                  Demonstrated consistent academic excellence and developed a
-                  strong foundation in logical reasoning and problem-solving
-                  skills which paved the way for a career in technology.
                 </p>
               </div>
             </motion.div>
 
+            {/* 3. Secondary School (Added) */}
             <motion.div
-              variants={itemVariants}
-              className="relative mb-12 border-l-2 border-white/10 pl-8 ml-4"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="relative pl-12"
             >
-              <span className="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.8)]"></span>
-
-              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-purple-500/30">
+              <motion.span
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.6 }}
+                className="absolute left-0 top-1 h-6 w-6 rounded-full border-4 border-black bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]"
+              />
+              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-blue-500/30 hover:bg-neutral-900/60">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
                   <h3 className="text-2xl font-bold text-white">
                     Secondary School
                   </h3>
-                  <span className="flex items-center gap-2 rounded-full bg-purple-500/10 px-4 py-1.5 text-xs font-bold text-purple-400 border border-purple-500/20">
-                    <Calendar size={12} /> 2017 - 2022
+                  <span className="flex items-center gap-2 rounded-full bg-blue-500/10 px-4 py-1.5 text-xs font-bold text-blue-400 border border-blue-500/20">
+                    <Calendar size={12} /> 2010 - 2022
                   </span>
                 </div>
-
                 <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
                   <div className="flex items-center gap-2">
-                    <GraduationCap size={18} className="text-purple-400" />
+                    <GraduationCap size={18} className="text-blue-400" />
                     <span>Jindal School</span>
                   </div>
                   <span className="hidden sm:inline">•</span>
                   <div className="flex items-center gap-2">
-                    <MapPin size={18} className="text-purple-400" />
+                    <MapPin size={18} className="text-blue-400" />
                     <span>Soyabali, India</span>
                   </div>
                 </div>
-
                 <p className="text-base leading-relaxed text-gray-300">
-                  Completed secondary education with a strong academic record,
-                  building foundational skills in Science and Mathematics, along
-                  with early exposure to Computer Science. Developed consistent
-                  discipline, logical reasoning, and problem-solving abilities
-                  that shaped my interest in technology.
+                  Built a strong foundation in academics and extracurriculars.
+                  Active participant in science exhibitions and inter-school
+                  competitions.
                 </p>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* ==================== 5. GET IN TOUCH ==================== */}
+        {/* GET IN TOUCH */}
         <section className="pb-20">
           <motion.div
-            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInLeft}
             className="mb-12 flex items-center gap-4"
           >
-            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
-              Get In Touch
-            </h2>
+            <h2 className="text-3xl font-bold text-white">Get In Touch</h2>
             <div className="h-[1px] w-32 bg-white/20"></div>
           </motion.div>
 
           <motion.div
-            variants={itemVariants}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
             className="pointer-events-auto mx-auto max-w-2xl rounded-2xl border border-white/10 bg-neutral-900/60 p-8 backdrop-blur-xl md:p-10"
           >
             <p className="mb-8 text-center text-gray-400">
@@ -463,8 +597,10 @@ const MainContent = () => {
                 ></textarea>
               </div>
 
-              <button
+              <motion.button
                 type="submit"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 className="group flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-8 py-4 font-bold text-white transition-all hover:bg-blue-600 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]"
               >
                 Send Message{" "}
@@ -472,11 +608,11 @@ const MainContent = () => {
                   size={18}
                   className="transition-transform group-hover:translate-x-1"
                 />
-              </button>
+              </motion.button>
             </form>
           </motion.div>
         </section>
-      </motion.div>
+      </div>
     </div>
   );
 };
