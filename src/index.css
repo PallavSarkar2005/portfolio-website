@@ -2,3 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  cursor: none;
+  background-color: #0a0a0a;
+  overflow-x: hidden;
+}
+
+a, button, [role="button"] {
+  cursor: none;
+}
+
+@media (hover: none) {
+  body {
+    cursor: auto;
+  }
+  
+  a, button, [role="button"] {
+    cursor: pointer;
+  }
+}

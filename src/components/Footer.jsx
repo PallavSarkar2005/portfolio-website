@@ -18,8 +18,7 @@ const Footer = () => {
 
       <div className="mx-auto max-w-7xl px-8 py-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          
-          {/* COLUMN 1: BRANDING */}
+
           <div className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tighter text-white">
               PORTFOLIO<span className="text-purple-500">.</span>

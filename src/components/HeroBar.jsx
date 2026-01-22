@@ -1,5 +1,6 @@
 import React from "react";
 import { Download } from "lucide-react";
+import { motion } from "framer-motion";
 
 const HeroBar = () => {
   const handleScroll = (e, id) => {
@@ -15,13 +16,39 @@ const HeroBar = () => {
   return (
     <nav className="flex w-full items-center justify-between border-b border-white/10 bg-neutral-950/60 px-8 py-6 backdrop-blur-md">
       <div
-        className="text-3xl font-bold tracking-tighter cursor-pointer"
+        className="flex items-center gap-4 cursor-pointer"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
-        <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(192,132,252,0.5)]">
-          PORTFOLIO
-        </span>
+        <motion.img
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          src="/logo.svg"
+          alt="PS Logo"
+          className="h-10 w-10 object-contain drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]"
+        />
+        <motion.span
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          className="hidden text-xl font-bold tracking-tight bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent bg-[length:200%_auto] sm:block animate-gradient"
+          style={{
+            animation: "textShimmer 3s linear infinite",
+          }}
+        >
+          Pallav Portfolio
+        </motion.span>
+        <style>
+          {`
+            @keyframes textShimmer {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+            }
+          `}
+        </style>
       </div>
+
       <ul className="hidden items-center gap-10 md:flex">
         {[
           { name: "Home", id: "home" },
@@ -40,8 +67,9 @@ const HeroBar = () => {
           </li>
         ))}
       </ul>
+
       <a
-        href="/resume.pdf"
+        href="/intership_resume.pdf"
         download="Pallav_Sarkar_CV.pdf"
         className="flex items-center gap-2 rounded-full border border-purple-500/50 bg-purple-500/10 px-6 py-2 text-base font-medium text-purple-300 transition-all hover:border-purple-400 hover:bg-purple-500/20 hover:text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.5)]"
       >

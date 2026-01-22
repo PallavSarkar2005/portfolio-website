@@ -17,7 +17,6 @@ import {
   Type,
 } from "lucide-react";
 
-// --- OPTIMIZED SPOTLIGHT CARD ---
 const SpotlightCard = ({ children, className = "" }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -52,7 +51,6 @@ const SpotlightCard = ({ children, className = "" }) => {
 };
 
 const MainContent = () => {
-  // --- ANIMATION VARIANTS ---
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
     visible: {
@@ -102,7 +100,6 @@ const MainContent = () => {
     },
   };
 
-  // --- FORM STATE ---
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -116,22 +113,31 @@ const MainContent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.location.href = `mailto:pallavsarkar@example.com?subject=${formData.subject}&body=Name: ${formData.name}%0AEmail: ${formData.email}%0A%0A${formData.message}`;
+    window.location.href = `mailto:pallav2005sarkar@gmail.com?subject=${formData.subject}&body=Name: ${formData.name}%0AEmail: ${formData.email}%0A%0A${formData.message}`;
   };
 
-  // --- TEXT COMPONENTS ---
   const AnimatedName = ({ text }) => (
     <motion.div
       initial="hidden"
       animate="visible"
       transition={{ staggerChildren: 0.08 }}
-      className="flex flex-wrap"
+      className="flex flex-wrap bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent bg-[length:200%_auto]"
+      style={{ animation: "textShimmer 3s linear infinite" }}
     >
       {text.split("").map((char, index) => (
         <motion.span key={index} variants={charVariants}>
           {char === " " ? "\u00A0" : char}
         </motion.span>
       ))}
+      <style>
+        {`
+            @keyframes textShimmer {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+            }
+          `}
+      </style>
     </motion.div>
   );
 
@@ -154,27 +160,35 @@ const MainContent = () => {
     </motion.div>
   );
 
-  // --- DATA ---
   const projects = [
     {
       title: "E-Commerce Platform",
-      desc: "A full-stack shopping platform with product previews and real-time inventory.",
-      tags: ["React", "Tailwind", "React Router-Dom", "Node.js"],
-      links: { demo: "#", git: "#" },
+      desc: "A full-stack shopping platform with product previews, real-time inventory, and secure checkout.",
+      tags: ["React", "Express.js", "MongoDB", "Node.js", "Tailwind"],
+      links: {
+        demo: "https://my-ecommerce-shop-zeta.vercel.app/",
+        git: "https://github.com/PallavSarkar2005/E-commerse-website",
+      },
       color: "from-purple-500 to-cyan-500",
     },
     {
-      title: "Dashboard",
-      desc: "Data visualization dashboard powered by predictive analytics and machine learning.",
-      tags: ["React", "Node.js", "Mongo.DB", "Tailwind"],
-      links: { demo: "#", git: "#" },
+      title: "Nanolink",
+      desc: "A powerful URL shortening service featuring analytics tracking, custom aliases, and fast redirection.",
+      tags: ["React", "Express.js", "MongoDB", "Node.js", "Tailwind"],
+      links: {
+        demo: "https://nanolink-project.vercel.app",
+        git: "https://github.com/PallavSarkar2005/nanolink-project",
+      },
       color: "from-pink-500 to-purple-500",
     },
     {
-      title: "Crypto Tracker",
-      desc: "Real-time cryptocurrency tracking app with interactive charts and portfolio management.",
-      tags: ["Vue", "D3.js", "Firebase"],
-      links: { demo: "#", git: "#" },
+      title: "3D Interactive Website",
+      desc: "An immersive 3D web experience built with modern animation libraries for high-performance visuals.",
+      tags: ["React", "Spline", "Tailwind", "Framer Motion"],
+      links: {
+        demo: "#",
+        git: "https://github.com/PallavSarkar2005/3d-website",
+      },
       color: "from-cyan-500 to-blue-500",
     },
   ];
@@ -209,8 +223,6 @@ const MainContent = () => {
   return (
     <div className="pointer-events-none w-full px-6 py-20 md:px-20">
       <div className="mx-auto max-w-6xl space-y-32">
-        
-        {/* HERO SECTION (ID: home) */}
         <section id="home" className="flex flex-col justify-center pt-20">
           <div className="pointer-events-auto">
             <motion.p
@@ -240,7 +252,6 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* PROJECTS SECTION (ID: work) */}
         <section id="work">
           <motion.div
             initial="hidden"
@@ -288,12 +299,22 @@ const MainContent = () => {
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <button className="flex items-center gap-2 rounded-lg bg-cyan-500/10 px-4 py-2 text-sm font-bold text-cyan-400 transition-all hover:bg-cyan-500 hover:text-black">
+                    <a
+                      href={project.links.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded-lg bg-cyan-500/10 px-4 py-2 text-sm font-bold text-cyan-400 transition-all hover:bg-cyan-500 hover:text-black"
+                    >
                       <ExternalLink size={16} /> Live Demo
-                    </button>
-                    <button className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-white transition-all hover:border-white hover:bg-white/5">
+                    </a>
+                    <a
+                      href={project.links.git}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm text-white transition-all hover:border-white hover:bg-white/5"
+                    >
                       <Github size={16} /> Code
-                    </button>
+                    </a>
                   </div>
                 </SpotlightCard>
               </motion.div>
@@ -301,7 +322,6 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* SKILLS SECTION (ID: about) */}
         <section id="about">
           <motion.div
             initial="hidden"
@@ -354,7 +374,6 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* EDUCATION SECTION */}
         <section className="pb-20">
           <motion.div
             initial="hidden"
@@ -370,7 +389,6 @@ const MainContent = () => {
           </motion.div>
 
           <div className="pointer-events-auto max-w-3xl relative">
-            {/* Timeline Line */}
             <motion.div
               initial={{ scaleY: 0 }}
               whileInView={{ scaleY: 1 }}
@@ -380,7 +398,6 @@ const MainContent = () => {
               className="absolute left-[11px] top-4 h-full w-[2px] bg-gradient-to-b from-pink-500 via-purple-500 to-transparent"
             />
 
-            {/* 1. Bachelor's Degree */}
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -423,7 +440,6 @@ const MainContent = () => {
               </div>
             </motion.div>
 
-            {/* 2. Higher Secondary School */}
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -464,7 +480,6 @@ const MainContent = () => {
               </div>
             </motion.div>
 
-            {/* 3. Secondary School */}
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -508,7 +523,6 @@ const MainContent = () => {
           </div>
         </section>
 
-        {/* GET IN TOUCH */}
         <section className="pb-20">
           <motion.div
             initial="hidden"
