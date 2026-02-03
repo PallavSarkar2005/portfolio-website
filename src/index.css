@@ -2,22 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  cursor: none;
-  background-color: #0a0a0a;
-  overflow-x: hidden;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-a, button, [role="button"] {
-  cursor: none;
+html,
+body {
+  width: 100%;
+  background-color: #000;
+  color: white;
+}
+
+canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body,
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea {
+    cursor: none !important;
+  }
 }
 
 @media (hover: none) {
   body {
-    cursor: auto;
+    cursor: auto !important;
   }
-  
-  a, button, [role="button"] {
-    cursor: pointer;
+  a,
+  button,
+  [role="button"] {
+    cursor: pointer !important;
   }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 10px;
 }

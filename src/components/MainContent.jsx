@@ -29,7 +29,7 @@ const SpotlightCard = ({ children, className = "" }) => {
 
   return (
     <div
-      className={`group relative border border-white/10 bg-neutral-900/40 overflow-hidden ${className}`}
+      className={`group relative border border-white/10 bg-neutral-900/40 overflow-hidden pointer-events-auto ${className}`}
       onMouseMove={handleMouseMove}
     >
       <motion.div
@@ -51,15 +51,6 @@ const SpotlightCard = ({ children, className = "" }) => {
 };
 
 const MainContent = () => {
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
-    },
-  };
-
   const fadeInLeft = {
     hidden: { opacity: 0, x: -50 },
     visible: {
@@ -69,15 +60,20 @@ const MainContent = () => {
     },
   };
 
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
+  };
+
   const floatingIcon = {
     animate: {
       y: [0, -10, 0],
       rotate: [0, 5, -5, 0],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
+      transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
     },
   };
 
@@ -93,11 +89,7 @@ const MainContent = () => {
 
   const wordVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
   const [formData, setFormData] = useState({
@@ -115,50 +107,6 @@ const MainContent = () => {
     e.preventDefault();
     window.location.href = `mailto:pallav2005sarkar@gmail.com?subject=${formData.subject}&body=Name: ${formData.name}%0AEmail: ${formData.email}%0A%0A${formData.message}`;
   };
-
-  const AnimatedName = ({ text }) => (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      transition={{ staggerChildren: 0.08 }}
-      className="flex flex-wrap bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent bg-[length:200%_auto]"
-      style={{ animation: "textShimmer 3s linear infinite" }}
-    >
-      {text.split("").map((char, index) => (
-        <motion.span key={index} variants={charVariants}>
-          {char === " " ? "\u00A0" : char}
-        </motion.span>
-      ))}
-      <style>
-        {`
-            @keyframes textShimmer {
-              0% { background-position: 0% 50%; }
-              50% { background-position: 100% 50%; }
-              100% { background-position: 0% 50%; }
-            }
-          `}
-      </style>
-    </motion.div>
-  );
-
-  const AnimatedTagline = ({ text }) => (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      transition={{ staggerChildren: 0.12, delayChildren: 0.5 }}
-      className="flex flex-wrap gap-x-3"
-    >
-      {text.split(" ").map((word, index) => (
-        <motion.span
-          key={index}
-          variants={wordVariants}
-          className="inline-block bg-gradient-to-r from-gray-400 via-white to-gray-400 bg-clip-text text-transparent"
-        >
-          {word}
-        </motion.span>
-      ))}
-    </motion.div>
-  );
 
   const projects = [
     {
@@ -221,7 +169,7 @@ const MainContent = () => {
   ];
 
   return (
-    <div className="pointer-events-none w-full px-6 py-20 md:px-20">
+    <div className="pointer-events-none w-full px-6 py-20 md:px-20 overflow-x-hidden">
       <div className="mx-auto max-w-6xl space-y-32">
         <section id="home" className="flex flex-col justify-center pt-20">
           <div className="pointer-events-auto">
@@ -234,10 +182,40 @@ const MainContent = () => {
               Hi, my name is
             </motion.p>
             <div className="mb-4 text-6xl font-bold tracking-tighter text-white md:text-8xl">
-              <AnimatedName text="Pallav Sarkar" />
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                transition={{ staggerChildren: 0.08 }}
+                className="flex flex-wrap bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent bg-[length:200%_auto]"
+                style={{
+                  animation: "textShimmer 3s linear infinite",
+                  willChange: "background-position",
+                }}
+              >
+                {"Pallav Sarkar".split("").map((char, index) => (
+                  <motion.span key={index} variants={charVariants}>
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
+              </motion.div>
             </div>
             <div className="mb-8 text-4xl font-bold md:text-6xl">
-              <AnimatedTagline text="I build things for the web." />
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                transition={{ staggerChildren: 0.12, delayChildren: 0.5 }}
+                className="flex flex-wrap gap-x-3"
+              >
+                {"I build things for the web.".split(" ").map((word, index) => (
+                  <motion.span
+                    key={index}
+                    variants={wordVariants}
+                    className="inline-block bg-gradient-to-r from-gray-400 via-white to-gray-400 bg-clip-text text-transparent"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </motion.div>
             </div>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -245,9 +223,9 @@ const MainContent = () => {
               transition={{ duration: 0.8, delay: 1.2 }}
               className="max-w-xl text-lg text-gray-300 backdrop-blur-sm"
             >
-              I'm a software engineer specializing in building (and occasionally
-              designing) exceptional digital experiences. Currently, I'm focused
-              on building accessible, human-centered products.
+              I'm a software engineer specializing in building exceptional
+              digital experiences. Currently, I'm focused on building
+              accessible, human-centered products.
             </motion.p>
           </div>
         </section>
@@ -281,7 +259,7 @@ const MainContent = () => {
                     className={`absolute top-0 left-0 h-1 w-full bg-gradient-to-r ${project.color}`}
                   />
                   <div>
-                    <h3 className="mb-2 text-2xl font-bold text-white transition-colors">
+                    <h3 className="mb-2 text-2xl font-bold text-white">
                       {project.title}
                     </h3>
                     <p className="mb-6 text-sm text-gray-400 leading-relaxed">
@@ -353,7 +331,9 @@ const MainContent = () => {
                 >
                   <cat.icon size={28} />
                 </motion.div>
-                <h3 className="mb-4 text-xl font-bold text-white">{cat.title}</h3>
+                <h3 className="mb-4 text-xl font-bold text-white">
+                  {cat.title}
+                </h3>
                 <ul className="space-y-2">
                   {cat.skills.map((skill) => (
                     <li
@@ -387,7 +367,6 @@ const MainContent = () => {
             </h2>
             <div className="h-[1px] w-32 bg-white/20"></div>
           </motion.div>
-
           <div className="pointer-events-auto max-w-3xl relative">
             <motion.div
               initial={{ scaleY: 0 }}
@@ -397,129 +376,63 @@ const MainContent = () => {
               style={{ originY: 0 }}
               className="absolute left-[11px] top-4 h-full w-[2px] bg-gradient-to-b from-pink-500 via-purple-500 to-transparent"
             />
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeInUp}
-              className="relative mb-12 pl-12"
-            >
-              <motion.span
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                transition={{ type: "spring", delay: 0.2 }}
-                className="absolute left-0 top-1 h-6 w-6 rounded-full border-4 border-black bg-pink-500 shadow-[0_0_10px_magenta]"
-              />
-              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-pink-500/30 hover:bg-neutral-900/60">
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-                  <h3 className="text-2xl font-bold text-white">
-                    Bachelor's Degree
-                  </h3>
-                  <span className="flex items-center gap-2 rounded-full bg-pink-500/10 px-4 py-1.5 text-xs font-bold text-pink-400 border border-pink-500/20">
-                    <Calendar size={12} /> 2024 - 2028
-                  </span>
-                </div>
-                <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <GraduationCap size={18} className="text-pink-400" />
-                    <span>Jindal School / University</span>
+            {[
+              {
+                title: "Bachelor's Degree",
+                year: "2024 - 2028",
+                color: "bg-pink-500",
+                shadow: "magenta",
+                university: "Jindal University",
+              },
+              {
+                title: "Higher Secondary",
+                year: "2022 - 2024",
+                color: "bg-purple-500",
+                shadow: "rgba(168,85,247,0.8)",
+                university: "Jindal School",
+              },
+              {
+                title: "Secondary School",
+                year: "2010 - 2022",
+                color: "bg-blue-500",
+                shadow: "rgba(59,130,246,0.8)",
+                university: "Jindal School",
+              },
+            ].map((edu, i) => (
+              <motion.div
+                key={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInUp}
+                className="relative mb-12 pl-12"
+              >
+                <motion.span
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  transition={{ type: "spring", delay: 0.2 * i }}
+                  className={`absolute left-0 top-1 h-6 w-6 rounded-full border-4 border-black ${edu.color}`}
+                  style={{ boxShadow: `0 0 10px ${edu.shadow}` }}
+                />
+                <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm hover:bg-neutral-900/60 transition-colors">
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+                    <h3 className="text-2xl font-bold text-white">
+                      {edu.title}
+                    </h3>
+                    <span className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-1.5 text-xs font-bold text-gray-400 border border-white/10">
+                      <Calendar size={12} /> {edu.year}
+                    </span>
                   </div>
-                  <span className="hidden sm:inline">•</span>
-                  <div className="flex items-center gap-2">
-                    <MapPin size={18} className="text-pink-400" />
-                    <span>Soyabali, India</span>
-                  </div>
-                </div>
-                <p className="text-base leading-relaxed text-gray-300">
-                  Pursuing a specialized degree focused on Computer Science
-                  principles. The curriculum involves deep dives into
-                  algorithms, software engineering patterns, and modern web
-                  technologies.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeInUp}
-              className="relative mb-12 pl-12"
-            >
-              <motion.span
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                transition={{ type: "spring", delay: 0.4 }}
-                className="absolute left-0 top-1 h-6 w-6 rounded-full border-4 border-black bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.8)]"
-              />
-              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-purple-500/30 hover:bg-neutral-900/60">
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-                  <h3 className="text-2xl font-bold text-white">
-                    Higher Secondary School
-                  </h3>
-                  <span className="flex items-center gap-2 rounded-full bg-purple-500/10 px-4 py-1.5 text-xs font-bold text-purple-400 border border-purple-500/20">
-                    <Calendar size={12} /> 2022 - 2024
-                  </span>
-                </div>
-                <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <GraduationCap size={18} className="text-purple-400" />
-                    <span>Jindal School</span>
-                  </div>
-                  <span className="hidden sm:inline">•</span>
-                  <div className="flex items-center gap-2">
-                    <MapPin size={18} className="text-purple-400" />
-                    <span>Soyabali, India</span>
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <GraduationCap size={18} />
+                    <span>{edu.university}</span>
+                    <span className="mx-2">•</span>
+                    <MapPin size={18} />
+                    <span>Odisha, India</span>
                   </div>
                 </div>
-                <p className="text-base leading-relaxed text-gray-300">
-                  Completed rigorous coursework with a major in Science and
-                  Mathematics, complemented by Computer Science electives.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeInUp}
-              className="relative pl-12"
-            >
-              <motion.span
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                transition={{ type: "spring", delay: 0.6 }}
-                className="absolute left-0 top-1 h-6 w-6 rounded-full border-4 border-black bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]"
-              />
-              <div className="rounded-xl border border-white/10 bg-neutral-900/40 p-8 backdrop-blur-sm transition-colors hover:border-blue-500/30 hover:bg-neutral-900/60">
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-                  <h3 className="text-2xl font-bold text-white">
-                    Secondary School
-                  </h3>
-                  <span className="flex items-center gap-2 rounded-full bg-blue-500/10 px-4 py-1.5 text-xs font-bold text-blue-400 border border-blue-500/20">
-                    <Calendar size={12} /> 2010 - 2022
-                  </span>
-                </div>
-                <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <GraduationCap size={18} className="text-blue-400" />
-                    <span>Jindal School</span>
-                  </div>
-                  <span className="hidden sm:inline">•</span>
-                  <div className="flex items-center gap-2">
-                    <MapPin size={18} className="text-blue-400" />
-                    <span>Soyabali, India</span>
-                  </div>
-                </div>
-                <p className="text-base leading-relaxed text-gray-300">
-                  Built a strong foundation in academics and extracurriculars.
-                  Active participant in science exhibitions and inter-school
-                  competitions.
-                </p>
-              </div>
-            </motion.div>
+              </motion.div>
+            ))}
           </div>
         </section>
 
@@ -534,7 +447,6 @@ const MainContent = () => {
             <h2 className="text-3xl font-bold text-white">Get In Touch</h2>
             <div className="h-[1px] w-32 bg-white/20"></div>
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -542,12 +454,6 @@ const MainContent = () => {
             transition={{ duration: 0.6 }}
             className="pointer-events-auto mx-auto max-w-2xl rounded-2xl border border-white/10 bg-neutral-900/60 p-8 backdrop-blur-xl md:p-10"
           >
-            <p className="mb-8 text-center text-gray-400">
-              My inbox is always open. Whether you have a question, a project
-              proposal, or just want to say hi, I'll try my best to get back to
-              you!
-            </p>
-
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
@@ -561,7 +467,7 @@ const MainContent = () => {
                     onChange={handleInputChange}
                     placeholder="John Doe"
                     required
-                    className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                    className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
@@ -575,11 +481,10 @@ const MainContent = () => {
                     onChange={handleInputChange}
                     placeholder="john@example.com"
                     required
-                    className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                    className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-blue-500"
                   />
                 </div>
               </div>
-
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-300">
                   <Type size={16} className="text-blue-400" /> Subject
@@ -591,10 +496,9 @@ const MainContent = () => {
                   onChange={handleInputChange}
                   placeholder="Project Inquiry"
                   required
-                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-blue-500"
                 />
               </div>
-
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-300">
                   <MessageSquare size={16} className="text-blue-400" /> Message
@@ -606,14 +510,13 @@ const MainContent = () => {
                   rows="4"
                   placeholder="Tell me about your project..."
                   required
-                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all focus:border-blue-500"
                 ></textarea>
               </div>
-
               <motion.button
-                type="submit"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                type="submit"
                 className="group flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-8 py-4 font-bold text-white transition-all hover:bg-blue-600 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]"
               >
                 Send Message{" "}
@@ -626,6 +529,7 @@ const MainContent = () => {
           </motion.div>
         </section>
       </div>
+      <style>{`@keyframes textShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }`}</style>
     </div>
   );
 };

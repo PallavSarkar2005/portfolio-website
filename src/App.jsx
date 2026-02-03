@@ -1,42 +1,46 @@
-import React, { useState, Suspense, lazy } from "react";
+import React, { useState, useEffect } from "react";
 import Spline from "@splinetool/react-spline";
 import HeroBar from "./components/HeroBar";
+import MainContent from "./components/MainContent";
 import Footer from "./components/Footer";
 import CustomCursor from "./components/CustomCursor";
-
-const MainContent = lazy(() => import("./components/MainContent"));
-
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+  }, []);
+
   return (
-    <div className="relative min-h-screen w-full bg-black text-white overflow-x-hidden">
+    <div className="relative w-full bg-black text-white">
       <CustomCursor />
-      
       {isLoading && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent shadow-[0_0_20px_cyan]"></div>
         </div>
       )}
-
-      <div className="fixed inset-0 z-0 h-screen w-full">
+      <div className="fixed inset-0 z-0 w-full h-full">
         <Spline
-          className="w-full h-full"
+          style={{ width: "100%", height: "100%" }}
           scene="https://prod.spline.design/y5DzUjfC7M-eBfER/scene.splinecode"
           onLoad={() => setIsLoading(false)}
         />
       </div>
-
-      <div 
-        className={`relative z-50 w-full transition-opacity duration-1000 ${
-          isLoading ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
-        }`}
+      <div
+        className={`relative z-10 w-full pointer-events-none ${isLoading ? "opacity-0" : "opacity-100"}`}
       >
-        <HeroBar />
-        <Suspense fallback={null}>
+        <div className="sticky top-0 z-[60] pointer-events-auto">
+          <HeroBar />
+        </div>
+        <div className="pointer-events-none">
           <MainContent />
-        </Suspense>
-        <Footer />
+        </div>
+        <div className="pointer-events-auto">
+          <Footer />
+        </div>
       </div>
     </div>
   );
