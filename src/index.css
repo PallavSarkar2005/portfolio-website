@@ -2,18 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* GLOBAL OPTIMIZATION */
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background: #FAF6EF;
-  color: #3D2B1A;
+  background: #faf6ef;
+  color: #3d2b1a;
   overflow-x: hidden;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
+
+  text-rendering: optimizeLegibility;
 }
+
+/* DARK MODE */
 
 .dark body {
   background: #1d1712;
-  color: #FAF6EF;
+  color: #faf6ef;
+}
+
+/* GPU OPTIMIZATION */
+
+canvas {
+  pointer-events: none !important;
+}
+
+/* SMOOTHER ANIMATIONS */
+
+.motion-safe {
+  will-change: transform;
+}
+
+/* REMOVE MOBILE TAP LAG */
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* BETTER IMAGE PERFORMANCE */
+
+img {
+  user-select: none;
+  -webkit-user-drag: none;
 }
