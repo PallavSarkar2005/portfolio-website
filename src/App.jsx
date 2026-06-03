@@ -216,7 +216,7 @@ export default function App() {
               Open to Internships 2027 &amp; Full-time Roles
             </div>
 
-            {/* HEADLINE */}
+            {/* HEADLINE   */}
             <motion.h1
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
